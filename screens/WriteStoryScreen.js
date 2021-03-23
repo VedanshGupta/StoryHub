@@ -3,7 +3,7 @@ import { Component } from 'react';
 import { Text, View, TouchableOpacity, TextInput, Image, StyleSheet, Alert, KeyboardAvoidingView } from 'react-native';
 import { Header } from 'react-native-elements';
 import * as firebase from 'firebase';
-import db from '../config';
+import db from '../Config';
 
 export default class WriteStory extends Component{
   constructor(){
@@ -42,16 +42,31 @@ export default class WriteStory extends Component{
   		        <TextInput 
   	              style={styles.inputBox}
   	              placeholder="Title"
+                  onChangeText ={(text)=>{
+                    this.setState({
+                        title:text
+                    })
+                }}
                   value={this.state.title}
                   />
                   <TextInput 
   	              style={styles.inputBox}
   	              placeholder="Author"
+                  onChangeText ={(text)=>{
+                    this.setState({
+                        author:text
+                    })
+                }}
                   value={this.state.author}
                   />
                   <TextInput 
   	              style={styles.inputBox}
   	              placeholder="Story"
+                  onChangeText ={(text)=>{
+                    this.setState({
+                        story:text
+                    })
+                }}
                   value={this.state.story}
   	              multiline
                   />
@@ -69,13 +84,15 @@ const styles = StyleSheet.create({
       width: 200,
       height: 40,
       borderWidth: 1.5,
-      borderRightWidth: 0,
-      fontSize: 20
+      borderRightWidth: 1.5,
+      fontSize: 20,
+      marginLeft: 65
     },
     submitButton:{
       backgroundColor: 'orange',
       width: 100,
-      height: 50
+      height: 50,
+      marginLeft: 115
     },
     submitButtonText:{
       fontSize: 20,
