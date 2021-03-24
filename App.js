@@ -1,21 +1,24 @@
 import React from 'react';
 import { Component } from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
-import { createAppContainer } from 'react-navigation';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import WriteStoryScreen from './screens/WriteStoryScreen';
 import ReadStoryScreen from './screens/ReadStoryScreen';
+import SignupLoginScreen from './screens/SignupLoginScreen';
 
-export default class App extends Component{
-  render(){
+export default function App(){
     return(
       <SafeAreaProvider>
       <AppContainer />
       </SafeAreaProvider>
     )
-  }
 }
+
+const navigator = createSwitchNavigator({
+  Security: {screen: SignupLoginScreen}
+})
 
 const TabNavigater = createBottomTabNavigator({
   WriteStory: {screen:WriteStoryScreen},
@@ -38,4 +41,4 @@ const TabNavigater = createBottomTabNavigator({
   })
 });
 
-const AppContainer = createAppContainer(TabNavigater);
+const AppContainer = createAppContainer(navigator);
