@@ -1,10 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View ,FlatList,ScrollView} from 'react-native';
 import {SearchBar,Header} from 'react-native-elements';
-import db from '../Config'
-
-
-
+import db from '../Config';
 
 export default class ReadStoryScreen extends React.Component {
   constructor(){
@@ -22,7 +19,6 @@ export default class ReadStoryScreen extends React.Component {
   updateSearch = search => {
     this.setState({ search });
   };
-
 
   retrieveStories=()=>{
     try {
@@ -42,7 +38,6 @@ export default class ReadStoryScreen extends React.Component {
       console.log(error);
     }
   };
-
 
   SearchFilterFunction(text) {
     //passing the inserted text in textinput
@@ -88,15 +83,11 @@ export default class ReadStoryScreen extends React.Component {
                   </View>
                 )}
                 keyExtractor={(item, index) => index.toString()}
-                /> 
-          
-          
-          
+                />  
         </View>  
       );      
     }
 }
-
 
 const styles = StyleSheet.create({
   container: {
