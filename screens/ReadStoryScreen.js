@@ -1,117 +1,122 @@
 import React from 'react';
-import { Component } from 'react';
-import { Text, View, TouchableOpacity, TextInput, Image, StyleSheet, ScrollView, FlatList, SafeAreaView } from 'react-native';
-import { Searchbar } from 'react-native-paper';
-import db from "../config.js";
+import { StyleSheet, Text, View ,FlatList,ScrollView} from 'react-native';
+import {SearchBar,Header} from 'react-native-elements';
+import db from '../Config'
 
-export default class ReadStory extends Component{
-	constructor(){
-		super();
-		this.state={
-			storyName: '',
-		}
-	}
 
-	retriveStories=async()=>{
-		const allStories = await db.collection("Stroies").get();
-		allStories.docs.map(doc => {
-      		var list = doc.data();
+
+
+export default class ReadStoryScreen extends React.Component {
+  constructor(){
+    super();
+    this.state ={
+      allStories:[],
+      dataSource:[],
+      search : ''
+    }
+  }
+  componentDidMount(){
+    this.retrieveStories()
+  }
+
+  updateSearch = search => {
+    this.setState({ search });
+  };
+
+
+  retrieveStories=()=>{
+    try {
+      var allStories= []
+      var stories = db.collection("stories")
+        .get().then((querySnapshot)=> {
+          querySnapshot.forEach((doc)=> {
+              // doc.data() is never undefined for query doc snapshots
+              
+              allStories.push(doc.data())
+              console.log('this are the stories',allStories)
+          })
+          this.setState({allStories})
+        })
+    }
+    catch (error) {
+      console.log(error);
+    }
+  };
+
+
+  SearchFilterFunction(text) {
+    //passing the inserted text in textinput
+    const newData = this.state.allStories.filter((item)=> {
+      //applying filter for the inserted text in search bar
+      const itemData = item.title ? item.title.toUpperCase() : ''.toUpperCase();
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
     });
-    return dataSource;
-	}
-
-	searchFilterFunction=async()=>{
-		const allStories = await db.collection("Stroies").where("Story", "==", this.state.storyName).limit(1).get();
-		allStories.docs.map(doc => {
-      var dataSource = doc.data();
-      if (dataSource.Story === this.state.storyName) {
-        <Text>{storyName}</Text>
-      } else {
-        alert("The book wasn't issued by this student!");
-        this.setState({
-          storyName: ''
-        });
-      }
+    this.setState({
+      //setting the filtered newData on datasource
+      //After setting the data it will automatically re-render the view
+      dataSource: newData,
+      search: text,
     });
-    return dataSource;
-	}
+  }
 
-	render(){
-
-		if(this.state.storyName === ""){
-			this.retriveStories();
-		}else{
-			return(
-				<Searchbar
-          placeholder="Search"
-          onChangeText={this.searchFilterFunction}
-          value={searchQuery}
-        />
-
-        <SafeAreaView style={styles.container}>
+    render(){
+      return(
+        <View style ={styles.container}>
+           <Header 
+                backgroundColor = {'pink'}
+                centerComponent = {{
+                    text : 'Bed Time Stories',
+                    style : { color: 'white', fontSize: 20}
+                }}
+            />
+          <View styles ={{height:20,width:'100%'}}>
+              <SearchBar
+              placeholder="Type Here..."
+              onChangeText={text => this.SearchFilterFunction(text)}
+              onClear={text => this.SearchFilterFunction('')}
+              value={this.state.search}
+            />
+          </View>
+          
           <FlatList
-            data={dataSource}
-            renderItem={dataSource}
-          />
-        </SafeAreaView>
-		)
-		}
-	}
+                data={this.state.search === "" ?  this.state.allStories: this.state.dataSource}
+                renderItem={({ item }) => (
+                  <View style={styles.itemContainer}>
+                    <Text>  Title: {item.title}</Text>
+                    <Text>  Author : {item.author}</Text>
+                  </View>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+                /> 
+          
+          
+          
+        </View>  
+      );      
+    }
 }
+
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
+    backgroundColor: '#fff',
   },
-  displayText: {
-    fontSize: 15,
-    textDecorationLine: "underline"
+  item: {
+    backgroundColor: 'pink',
+    padding:10,
+    marginVertical: 8,
+    marginHorizontal: 16,
   },
-  scanButton: {
-    backgroundColor: "#2196F3",
-    padding: 10,
-    margin: 10
+  title: {
+    fontSize: 32,
   },
-  buttonText: {
-    fontSize: 15,
-    textAlign: "center",
-    marginTop: 10
-  },
-  inputView: {
-    flexDirection: "row",
-    margin: 20
-  },
-  inputBox: {
-    width: 400,
-    textAlign:"center",
-    height: 40,
-    borderWidth: 4,
-    borderRightWidth: 4,
-    fontSize: 20,
-    marginLeft:450
-  },
-  scanButton: {
-    backgroundColor: "#66BB6A",
-    width: 50,
-    borderWidth: 1.5,
-    borderLeftWidth: 0
-  },
-  submitButton: {
-    backgroundColor: "#FBC02D",
-    width: 100,
-    height: 50
-  },
-  submitButtonText: {
-    padding: 10,
-    textAlign: "center",
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "white"
-  },
-  transactionAlert: {
-    margin: 10,
-    color: "red"
+  itemContainer: {
+    height: 80,
+    width:'100%',
+    borderWidth: 2,
+    borderColor: 'pink',
+    justifyContent:'center',
+    alignSelf: 'center',
   }
 });
